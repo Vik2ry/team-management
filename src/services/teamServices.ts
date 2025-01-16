@@ -15,6 +15,7 @@ export const createTeamInDatabase = async (userId: string) => {
       position: Position.Goalkeeper,
       forSale: true,
       askingPrice: Math.floor(Math.random() * 1000000) + 1,
+      value: Math.floor(Math.random() * 1000000) + 1,
     });
 
   // 6 Defenders
@@ -24,6 +25,7 @@ export const createTeamInDatabase = async (userId: string) => {
       position: Position.Defender,
       forSale: true,
       askingPrice: Math.floor(Math.random() * 1000000) + 1,
+      value: Math.floor(Math.random() * 1000000) + 1,
     });
 
   // 6 Midfielders
@@ -33,6 +35,7 @@ export const createTeamInDatabase = async (userId: string) => {
       position: Position.Midfielder,
       forSale: true,
       askingPrice: Math.floor(Math.random() * 1000000) + 1,
+      value: Math.floor(Math.random() * 1000000) + 1,
     });
 
   // 5 Attackers
@@ -42,6 +45,7 @@ export const createTeamInDatabase = async (userId: string) => {
       position: Position.Attacker,
       forSale: true,
       askingPrice: Math.floor(Math.random() * 1000000) + 1,
+      value: Math.floor(Math.random() * 1000000) + 1,
     });
 
   // Create the team and players in the database

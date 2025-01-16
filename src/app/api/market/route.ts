@@ -1,55 +1,64 @@
-import { verifyToken } from '@/lib/auth';
-import prisma from '../../../lib/prisma';
-import { NextApiRequest, NextApiResponse } from 'next';
+import { NextResponse } from "next/server";
+import prisma from "@/lib/prisma";
+import { verifyToken } from "@/lib/auth";
 
-export default async function handler(req: NextApiRequest, res: NextApiResponse) {
-  if (req.method === 'GET') {
-    try {
-      const players = await prisma.player.findMany({
-        where: { forSale: true },
-      });
-      res.status(200).json(players);
-    } catch (err) {
-      res.status(500).json({ message: 'Error fetching market data' });
+// GET request handler
+export async function GET() {
+  try {
+    const players = await prisma.player.findMany({
+      where: { forSale: true },
+    });
+
+    return NextResponse.json(players, { status: 200 });
+  } catch (err) {
+    console.error("Error fetching market data:", err);
+    return NextResponse.json({ message: "Error fetching market data" }, { status: 500 });
+  }
+}
+
+// POST request handler
+export async function POST(req: Request) {
+  try {
+    const { playerId } = await req.json(); // Parse the request body
+    const token = req.headers.get("authorization")?.replace("Bearer ", "");
+    const user = verifyToken(token); // Verify the token
+
+    if (!user) {
+      return NextResponse.json({ message: "Unauthorized" }, { status: 401 });
     }
-  } else if (req.method === 'POST') {
-    const { playerId } = req.body;
-    const token = req.headers.authorization?.split(' ')[1];
-    if (!token) return res.status(401).json({ message: 'Unauthorized' });
-    const decoded = verifyToken(req);
 
-    if (!decoded) return res.status(401).json({ message: 'Unauthorized' });
-
-    try {
-      const player = await prisma.player.findUnique({ where: { id: playerId } });
-      if (!player || !player.forSale)
-        return res.status(400).json({ message: 'Player not available' });
-
-      const team = await prisma.team.findUnique({
-        where: { userId: decoded.id },
-      });
-
-      if(!team) return res.status(400).json({ message: 'Team not found' });
-
-      if (team.budget < player.askingPrice * 0.95)
-        return res.status(400).json({ message: 'Insufficient budget' });
-
-      await prisma.$transaction([
-        prisma.team.update({
-          where: { id: team.id },
-          data: { budget: { decrement: player.askingPrice * 0.95 } },
-        }),
-        prisma.player.update({
-          where: { id: player.id },
-          data: { teamId: team.id, forSale: false, askingPrice: 0 },
-        }),
-      ]);
-
-      res.status(200).json({ message: 'Player purchased successfully' });
-    } catch (err) {
-      res.status(500).json({ message: 'Error processing transaction' });
+    // Check if the player exists and is for sale
+    const player = await prisma.player.findUnique({ where: { id: playerId } });
+    if (!player || !player.forSale) {
+      return NextResponse.json({ message: "Player not available" }, { status: 400 });
     }
-  } else {
-    res.status(405).json({ message: 'Method not allowed' });
+
+    // Check if the user has a team and sufficient budget
+    const team = await prisma.team.findUnique({
+      where: { userId: (user as any).id },
+    });
+    if (!team) {
+      return NextResponse.json({ message: "Team not found" }, { status: 400 });
+    }
+    if (team.budget < player.askingPrice * 0.95) {
+      return NextResponse.json({ message: "Insufficient budget" }, { status: 400 });
+    }
+
+    // Process the transaction
+    await prisma.$transaction([
+      prisma.team.update({
+        where: { id: team.id },
+        data: { budget: { decrement: player.askingPrice * 0.95 } },
+      }),
+      prisma.player.update({
+        where: { id: player.id },
+        data: { teamId: team.id, forSale: false, askingPrice: 0 },
+      }),
+    ]);
+
+    return NextResponse.json({ message: "Player purchased successfully" }, { status: 200 });
+  } catch (err) {
+    console.error("Error processing transaction:", err);
+    return NextResponse.json({ message: "Error processing transaction" }, { status: 500 });
   }
 }

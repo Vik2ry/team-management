@@ -26,9 +26,13 @@ export default function LandingPage() {
           >
             How It Works
           </Link>
-          <Button variant="default" className="bg-green-600 hover:bg-green-700">
-            Get Started
-          </Button>
+          <Link href="/signup" passHref>
+            <Button asChild className="bg-green-600 hover:bg-green-700">
+              <span>
+              Get Started
+              </span>
+            </Button>
+          </Link>
         </nav>
       </header>
       <main className="flex-1">
@@ -155,7 +159,11 @@ export default function LandingPage() {
               </div>
               <div className="flex flex-col gap-2 min-[400px]:flex-row">
                 <Link href="/signup" passHref>
-                  <Button asChild className="bg-green-600 hover:bg-green-700" size="lg">
+                  <Button
+                    asChild
+                    className="bg-green-600 hover:bg-green-700"
+                    size="lg"
+                  >
                     <span>
                       Start Playing Now
                       <ArrowRight className="ml-2 h-4 w-4" />

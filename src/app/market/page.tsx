@@ -1,3 +1,4 @@
+'use client'
 import { useState } from 'react';
 import { useQuery } from 'react-query';
 import axios from 'axios';
@@ -47,7 +48,7 @@ export default function Market() {
       <ul>
         {filteredPlayers?.map((player) => (
           <li key={player.id}>
-            {player.name} - {player.position} - ${player.price.toLocaleString()}
+            {player.name} - {player.position} - ${player.askingPrice.toLocaleString()}
             <button onClick={() => handleBuy(player.id)}>Buy</button>
           </li>
         ))}
