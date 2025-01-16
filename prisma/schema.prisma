@@ -1,0 +1,42 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id        String   @id @default(cuid())
+  email   String  @unique
+  password String
+  team    Team?
+}
+
+model Team {
+  id        String    @id @default(cuid())
+  userId  String      @unique
+  teamName String
+  budget  Float    @default(5000000)
+  players Player[]
+  user    User     @relation(fields: [userId], references: [id])
+}
+
+model Player {
+  id         String   @id @default(cuid())
+  teamId   String
+  name     String
+  position Position
+  askingPrice Float
+  forSale  Boolean
+  value    Float?
+  team     Team   @relation(fields: [teamId], references: [id])
+}
+
+enum Position {
+  Goalkeeper
+  Defender
+  Midfielder
+  Attacker
+}
