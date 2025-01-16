@@ -21,8 +21,6 @@ import { Input } from '@/components/ui/input'
 
 const signUpSchema = z.object({
   email: z.string().email({ message: 'Please enter a valid email address' }),
-  firstName: z.string().min(2, { message: 'First name must be at least 2 characters' }),
-  lastName: z.string().min(2, { message: 'Last name must be at least 2 characters' }),
   password: z.string().min(8, { message: 'Password must be at least 8 characters' }),
   confirmPassword: z.string()
 }).refine((data) => data.password === data.confirmPassword, {
@@ -40,8 +38,6 @@ export function SignUpForm() {
     resolver: zodResolver(signUpSchema),
     defaultValues: {
       email: '',
-      firstName: '',
-      lastName: '',
       password: '',
       confirmPassword: '',
     },
@@ -83,34 +79,6 @@ export function SignUpForm() {
             </FormItem>
           )}
         />
-        <div className="grid grid-cols-2 gap-4">
-          <FormField
-            control={form.control}
-            name="firstName"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel className="text-xs font-normal">First Name</FormLabel>
-                <FormControl>
-                  <Input placeholder="First name" {...field} />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-          <FormField
-            control={form.control}
-            name="lastName"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel className="text-xs font-normal">Last Name</FormLabel>
-                <FormControl>
-                  <Input placeholder="Last name" {...field} />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-        </div>
         <FormField
           control={form.control}
           name="password"
