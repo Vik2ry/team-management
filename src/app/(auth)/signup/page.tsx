@@ -33,7 +33,7 @@ export default function SignUpPage() {
         </div>
       </div> */}
       <div className="relative flex flex-col items-center min-h-screen md:min-h-0 md:block md:-left-[15%] md:pt-20 px-4 md:px-0">
-        <div className="w-full max-w-[440px] mx-auto md:ml-auto md:mr-0 rounded-lg bg-white p-5 shadow-lg">
+        <div className="w-full max-w-[440px] my-auto md:mt-0 mx-auto md:ml-auto md:mr-0 rounded-lg bg-white p-5 shadow-lg">
           <div className="flex justify-center items-center mb-2">
             <Shield className="h-6 w-6 text-green-600" />
             <div className="flex items-center">

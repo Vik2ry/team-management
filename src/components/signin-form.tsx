@@ -7,6 +7,7 @@ import { useForm } from 'react-hook-form'
 import { toast } from 'sonner'
 import * as z from 'zod'
 import { Loader2 } from 'lucide-react'
+import axios from 'axios'
 
 import { Button } from '@/components/ui/button'
 import {
@@ -21,10 +22,18 @@ import { Input } from '@/components/ui/input'
 
 const signInSchema = z.object({
   email: z.string().email({ message: 'Please enter a valid email address' }),
-  password: z.string().min(1, { message: 'Password is required' }),
+  password: z.string().min(8, { message: 'Password must be 8 or more digits' }),
 })
 
 type Inputs = z.infer<typeof signInSchema>
+
+interface AuthResponse {
+  token: string
+}
+
+interface ErrorResponse {
+  message: string
+}
 
 export function SignInForm() {
   const router = useRouter()
@@ -40,16 +49,20 @@ export function SignInForm() {
 
   async function onSubmit(data: Inputs) {
     setLoading(true)
-
     try {
-      // Here you would typically make an API call to authenticate the user
-      await new Promise(resolve => setTimeout(resolve, 1000)) // Simulated API call
+      console.log('data', data);
       
-      // If successful, redirect to dashboard
+      const response = await axios.post<AuthResponse>('/api/auth', data)
+      console.log('response', response);
+      
+      localStorage.setItem('token', response.data.token)
       toast.success('Signed in successfully')
       router.push('/dashboard')
     } catch (err) {
-      toast.error('Invalid email or password')
+      const errorResponse: ErrorResponse =
+        (axios.isAxiosError(err) && (err.response?.data as ErrorResponse)) ||
+        { message: 'Invalid email or password' }
+      toast.error(errorResponse.message)
     } finally {
       setLoading(false)
     }
@@ -92,7 +105,7 @@ export function SignInForm() {
             </FormItem>
           )}
         />
-        <div className="flex items-center justify-end">
+        {/* <div className="flex items-center justify-end">
           <Button 
             variant="link" 
             className="px-0 text-green-600 hover:text-green-700"
@@ -103,7 +116,7 @@ export function SignInForm() {
           >
             Forgot password?
           </Button>
-        </div>
+        </div> */}
         <Button 
           className="mt-2 bg-green-600 hover:bg-green-700" 
           disabled={loading}

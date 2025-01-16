@@ -1,5 +1,5 @@
 import Queue from "bull";
-import { createTeamInDatabase } from "@/app/services/teamServices"; // Function to create team in DB
+import { createTeamInDatabase } from "@/services/teamServices"; // Function to create team in DB
 
 // Initialize the queue
 const teamQueue = new Queue("team-creation", {

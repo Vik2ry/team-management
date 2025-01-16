@@ -18,6 +18,7 @@ import {
   FormMessage,
 } from '@/components/ui/form'
 import { Input } from '@/components/ui/input'
+import axios from 'axios'
 
 const signUpSchema = z.object({
   email: z.string().email({ message: 'Please enter a valid email address' }),
@@ -29,6 +30,14 @@ const signUpSchema = z.object({
 })
 
 type Inputs = z.infer<typeof signUpSchema>
+
+interface AuthResponse {
+  token: string
+}
+
+interface ErrorResponse {
+  message: string
+}
 
 export function SignUpForm() {
   const router = useRouter()
@@ -45,15 +54,16 @@ export function SignUpForm() {
 
   async function onSubmit(data: Inputs) {
     setLoading(true)
-
     try {
-      // Here you would typically make an API call to register the user
-      await new Promise(resolve => setTimeout(resolve, 1000)) // Simulated API call
-      
+      const response = await axios.post<AuthResponse>('/api/auth', data)
+      localStorage.setItem('token', response.data.token)
       toast.success('Account created successfully')
       router.push('/dashboard')
     } catch (err) {
-      toast.error('Something went wrong. Please try again.')
+      const errorResponse: ErrorResponse =
+        (axios.isAxiosError(err) && (err.response?.data as ErrorResponse)) ||
+        { message: 'Something went wrong. Please try again.' }
+      toast.error(errorResponse.message)
     } finally {
       setLoading(false)
     }

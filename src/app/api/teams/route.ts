@@ -1,7 +1,7 @@
 import { NextApiRequest, NextApiResponse } from "next";
-import prisma from "../lib/prisma";
-import { verifyToken } from "../lib/auth";
-import { positions } from "@/app/lib/constants";
+import prisma from "../../../lib/prisma";
+import { verifyToken } from "../../../lib/auth";
+import { positions } from "@/lib/constants";
 import axios from "axios";
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {

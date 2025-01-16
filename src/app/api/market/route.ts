@@ -1,5 +1,5 @@
-import { verifyToken } from '@/app/lib/auth';
-import prisma from '../lib/prisma';
+import { verifyToken } from '@/lib/auth';
+import prisma from '../../../lib/prisma';
 import { NextApiRequest, NextApiResponse } from 'next';
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {

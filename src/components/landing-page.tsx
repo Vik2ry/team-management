@@ -13,15 +13,15 @@ export default function LandingPage() {
           <Shield className="h-6 w-6 text-green-600" />
           <span className="ml-2 text-xl font-bold">FantasyPro</span>
         </Link>
-        <nav className="ml-auto flex gap-4 sm:gap-6">
+        <nav className="ml-auto flex items-center gap-4 sm:gap-6">
           <Link
             href="#feature"
-            className="text-sm font-medium hover:underline underline-offset-4"
+            className="text-sm hidden sm:block font-medium hover:underline underline-offset-4"
           >
             Features
           </Link>
           <Link
-            className="text-sm font-medium hover:underline underline-offset-4"
+            className="text-sm hidden sm:block font-medium hover:underline underline-offset-4"
             href="#"
           >
             How It Works

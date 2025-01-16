@@ -1,12 +1,14 @@
 import { NextApiRequest, NextApiResponse } from "next";
 import bcrypt from "bcrypt";
-import prisma from "../lib/prisma";
-import { signToken } from "../lib/auth";
-import { fetchRandomPlayers } from "./teams";
+import prisma from "../../../lib/prisma";
+import { signToken } from "../../../lib/auth";
+import { fetchRandomPlayers } from "../teams/route";
 import teamQueue from "@/app/queues/teamQueues";
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   const { email, password } = req.body;
+  console.log("email", email);
+  
 
   if (req.method === "POST") {
     const existingUser = await prisma.user.findUnique({ where: { email } });
