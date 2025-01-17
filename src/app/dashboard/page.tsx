@@ -1,9 +1,10 @@
 'use client'
 
+import { useState } from 'react'
 import { useQuery } from 'react-query'
 import axios from 'axios'
 import { motion } from 'framer-motion'
-import { Team, Position } from '@/types'
+import { Team, Position, mapPosition } from '@/types'
 import { PlayerCard } from '@/components/player-card'
 import { Skeleton } from '@/components/ui/skeleton'
 import {
@@ -31,6 +32,7 @@ const fetchTeam = async (): Promise<Team> => {
 }
 
 export default function Dashboard() {
+  const [activeTab, setActiveTab] = useState<'ALL' | Position>('ALL')
   const { data: team, isLoading, error } = useQuery(['team'], fetchTeam, {
     staleTime: 300000,
     retry: 1,
@@ -42,6 +44,10 @@ export default function Dashboard() {
     if (!players?.length) return 0
     return Math.round(players.reduce((acc, player) => acc + player.rating, 0) / players.length)
   }
+
+  const filteredPlayers = team?.players.filter(player => 
+    activeTab === 'ALL' ? true : mapPosition(player.position) === activeTab
+  )
 
   return (
     <div className="container mx-auto py-8 px-4">
@@ -103,7 +109,7 @@ export default function Dashboard() {
           Failed to load team.
         </div>
       ) : team && (
-        <Tabs defaultValue="ALL" className="space-y-6">
+        <Tabs value={activeTab} onValueChange={(value) => setActiveTab(value as 'ALL' | Position)} className="space-y-6">
           <TabsList>
             <TabsTrigger value="ALL">All Players</TabsTrigger>
             {positions.map((pos) => (
@@ -113,25 +119,11 @@ export default function Dashboard() {
             ))}
           </TabsList>
 
-          <TabsContent value="ALL" className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-            {team.players.map((player) => (
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+            {filteredPlayers?.map((player) => (
               <PlayerCard key={player.id} player={player} />
             ))}
-          </TabsContent>
-
-          {positions.map((pos) => (
-            <TabsContent
-              key={pos}
-              value={pos}
-              className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6"
-            >
-              {team.players
-                .filter((player) => player.position === pos)
-                .map((player) => (
-                  <PlayerCard key={player.id} player={player} />
-                ))}
-            </TabsContent>
-          ))}
+          </div>
         </Tabs>
       )}
     </div>

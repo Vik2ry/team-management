@@ -22,8 +22,8 @@ interface PlayerCardProps {
 }
 
 const getPlayerImage = (name: string) => {
-  // Using Unsplash API with a football-related query
-  return `https://source.unsplash.com/featured/400x300/?football,soccer,player&${name}`
+  const seed = encodeURIComponent(name)
+  return `https://api.dicebear.com/7.x/personas/png?seed=${seed}&backgroundColor=b6e3f4`
 }
 
 export function PlayerCard({ player, onBuy, showBuyButton = false }: PlayerCardProps) {

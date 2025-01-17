@@ -25,7 +25,7 @@ const fetchPlayers = async (): Promise<Player[]> => {
 
 export default function Market() {
   const [filter, setFilter] = useState('')
-  const [positionFilter, setPositionFilter] = useState<'ALL' | Position>('ALL')
+  const [positionFilter, setPositionFilter] = useState<Position | 'ALL'>('ALL')
 
   const { data: players, error, isLoading } = useQuery<Player[], Error>(
     'players',
@@ -71,17 +71,17 @@ export default function Market() {
               />
               <Select
                 value={positionFilter}
-                onValueChange={(value) => setPositionFilter(value as 'ALL' | Position)}
+                onValueChange={(value: Position | 'ALL') => setPositionFilter(value)}
               >
                 <SelectTrigger className="w-[180px]">
                   <SelectValue placeholder="Position" />
                 </SelectTrigger>
                 <SelectContent>
                   <SelectItem value="ALL">All Positions</SelectItem>
-                  <SelectItem value="Goalkeeper">Goalkeepers</SelectItem>
-                  <SelectItem value="Defender">Defenders</SelectItem>
-                  <SelectItem value="Midfielder">Midfielders</SelectItem>
-                  <SelectItem value="Attacker">Attackers</SelectItem>
+                  <SelectItem value="GK">Goalkeeper</SelectItem>
+                  <SelectItem value="DEF">Defender</SelectItem>
+                  <SelectItem value="MID">Midfielder</SelectItem>
+                  <SelectItem value="FWD">Forward</SelectItem>
                 </SelectContent>
               </Select>
             </div>
