@@ -1,22 +1,21 @@
+import { mapPosition } from '@/types'
 import { NextResponse } from "next/server";
 import prisma from "@/lib/prisma";
 import { verifyToken } from "@/lib/auth";
 
 // GET request handler
 export async function GET() {
-  try {
-    const players = await prisma.player.findMany({
-      where: { forSale: true },
-    });
+  const players = await prisma.player.findMany({
+    where: { forSale: true }
+  })
 
-    return NextResponse.json(players, { status: 200 });
-  } catch (err) {
-    console.error("Error fetching market data:", err);
-    return NextResponse.json({ message: "Error fetching market data" }, { status: 500 });
-  }
+  return Response.json(players.map(player => ({
+    ...player,
+    position: mapPosition(player.position)
+  })))
 }
 
-// POST request handler
+
 export async function POST(req: Request) {
   try {
     const { playerId } = await req.json(); // Parse the request body

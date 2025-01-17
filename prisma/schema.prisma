@@ -24,14 +24,33 @@ model Team {
 }
 
 model Player {
-  id         String   @id @default(cuid())
-  teamId   String
-  name     String
-  position Position
+  id          String   @id @default(cuid())
+  teamId      String
+  name        String
+  position    Position
   askingPrice Float
-  forSale  Boolean
-  value    Float?
-  team     Team   @relation(fields: [teamId], references: [id])
+  forSale     Boolean
+  value       Float?
+  team        Team     @relation(fields: [teamId], references: [id])
+  
+  // Base stats
+  rating      Float    @default(70)
+  
+  // Outfield player stats
+  pace        Float?
+  shooting    Float?
+  passing     Float?
+  dribbling   Float?
+  defending   Float?
+  physical    Float?
+  
+  // Goalkeeper stats
+  diving      Float?
+  handling    Float?
+  kicking     Float?
+  reflexes    Float?
+  speed       Float?
+  positioning Float?
 }
 
 enum Position {
