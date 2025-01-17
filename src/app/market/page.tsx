@@ -17,21 +17,43 @@ import {
 import { Skeleton } from "@/components/ui/skeleton";
 import { toast } from "sonner";
 import { Card } from "@/components/ui/card";
-import { Link, Shield } from "lucide-react";
+import { Shield, LogOut } from "lucide-react";
+import Link from "next/link";
+import { useRouter } from "next/navigation";
 
+// Fetch the current user's team
+const fetchTeam = async () => {
+  const token = localStorage.getItem("token");
+  const { data } = await axios.get("/api/team", {
+    headers: { Authorization: `Bearer ${token}` },
+  });
+  return data;
+};
+
+// Fetch all players on the market
 const fetchPlayers = async (): Promise<Player[]> => {
   const { data } = await axios.get<Player[]>("/api/market");
   return data;
 };
 
 export default function Market() {
+  const router = useRouter();
   const [filter, setFilter] = useState("");
   const [positionFilter, setPositionFilter] = useState<Position | "ALL">("ALL");
 
+  const { data: team, isLoading: teamLoading, error: teamError } = useQuery(
+    ["team"],
+    fetchTeam,
+    {
+      staleTime: 300000,
+      retry: 1,
+    }
+  );
+
   const {
     data: players,
-    error,
-    isLoading,
+    isLoading: playersLoading,
+    error: playersError,
   } = useQuery<Player[], Error>("players", fetchPlayers);
 
   const handleBuy = async (playerId: string) => {
@@ -48,13 +70,21 @@ export default function Market() {
     }
   };
 
+  const handleLogout = () => {
+    localStorage.removeItem("token");
+    router.push("/");
+  };
+
+  // Exclude players in the user's team
+  const excludedPlayerIds = team?.players.map((player: Player) => player.id) || [];
   const filteredPlayers = players?.filter((player) => {
+    const isNotInTeam = !excludedPlayerIds.includes(player.id);
     const matchesSearch = player.name
       .toLowerCase()
       .includes(filter.toLowerCase());
     const matchesPosition =
       positionFilter === "ALL" || player.position === positionFilter;
-    return matchesSearch && matchesPosition && player.forSale;
+    return isNotInTeam && matchesSearch && matchesPosition && player.forSale;
   });
 
   return (
@@ -71,7 +101,20 @@ export default function Market() {
           >
             Dashboard
           </Link>
-          {/* add a functional logout icon here */}
+          {/* Logout button for non-mobile screens */}
+          <button
+            onClick={handleLogout}
+            className="hidden sm:block text-sm font-medium text-red-600 hover:underline underline-offset-4"
+          >
+            Logout
+          </button>
+          {/* Logout icon for mobile screens */}
+          <button
+            onClick={handleLogout}
+            className="block sm:hidden text-red-600"
+          >
+            <LogOut className="h-6 w-6" />
+          </button>
         </nav>
       </header>
       <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
@@ -113,7 +156,7 @@ export default function Market() {
             </Card>
           </motion.div>
 
-          {isLoading ? (
+          {(teamLoading || playersLoading) ? (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
               {[...Array(8)].map((_, i) => (
                 <Card key={i} className="overflow-hidden">
@@ -121,10 +164,10 @@ export default function Market() {
                 </Card>
               ))}
             </div>
-          ) : error ? (
+          ) : teamError || playersError ? (
             <div className="text-center p-8 bg-red-50 dark:bg-red-900/20 rounded-lg">
               <p className="text-red-600 dark:text-red-400">
-                Error: {error.message}
+                Error: {(teamError as any)?.message || (playersError as any)?.message}
               </p>
             </div>
           ) : (
