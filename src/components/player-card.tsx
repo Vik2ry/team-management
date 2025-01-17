@@ -21,6 +21,11 @@ interface PlayerCardProps {
   showBuyButton?: boolean
 }
 
+const getPlayerImage = (name: string) => {
+  // Using Unsplash API with a football-related query
+  return `https://source.unsplash.com/featured/400x300/?football,soccer,player&${name}`
+}
+
 export function PlayerCard({ player, onBuy, showBuyButton = false }: PlayerCardProps) {
   // Get stats based on position
   const getStats = () => {
@@ -81,10 +86,11 @@ export function PlayerCard({ player, onBuy, showBuyButton = false }: PlayerCardP
         <CardHeader className="relative h-48 p-0">
           <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent z-10" />
           <Image
-            src={`/placeholder.svg?height=200&width=300`}
+            src={getPlayerImage(player.name) || "/placeholder.svg"}
             alt={player.name}
             fill
             className="object-cover"
+            priority={false}
           />
           <div className="absolute top-2 right-2 z-20">
             <Badge 
