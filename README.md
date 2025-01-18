@@ -142,3 +142,11 @@ This configuration:
   Never hardcode sensitive credentials. Use `.env` files or a secrets manager.
 
 ---
+
+- **Time Report**
+  Planning and Project setup ---------------------------------- 2 hours
+  Background process setup and Research------------------------ 2 hours
+  Schema setup Authentication and API routes initial setup----- 4 hours
+  Basic/bare-boned UI setup ----------------------------------- 2 hours
+  Player Card design and initial UI---------------------------- 3 hours
+  Debugging UI when a line went missing unknown to me --------- 4 hours
