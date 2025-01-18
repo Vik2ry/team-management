@@ -38,7 +38,7 @@ export interface Team {
   players: Player[]
 }
 
-export type Position = "GK" | "DEF" | "MID" | "FWD";
+export type Position = "GK" | "DEF" | "MID" | "FWD" | "Goalkeeper" | "Defender" | "Midfielder" | "Attacker";
 
 // Helper function to map Prisma Position enum to frontend position type
 export const mapPosition = (position: string): Position => {
